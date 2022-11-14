@@ -4,15 +4,15 @@ import matloplib.pyplot as plt
 
 class City:
     
-    def __inin__(self, Country, City, Citizen, Longitude, Latitude):
+    def __inin__(self, Country, City1, Citizen, Longitude, Latitude):
         self.Country = Country
-        self.City = City
+        self.City1 = City1
         self.Citizen = Citizen
         self.Longitude = Longitude
         self.Latitude = Latitude
         if Country == '' or type(Country) != type('str'):
             raise ValueError('The name of the Country should be not empty and String')
-        if City== '' or type(City) != type('str'):
+        if City1 == '' or type(City1) != type('str'):
             raise ValueError('The name of the should be not empty and String')
         if Citizen <= 0 or type(Citizen) != int:
             raise ValueError('The number of the citizen should be integer')
