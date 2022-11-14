@@ -1,7 +1,27 @@
 from typing import Dict, List, Tuple
 from math import *
+import matloplib.pyplot as plt
+
 class City:
-    ...
+    
+    def __inin__(self, Country, City, Citizen, Longitude, Latitude):
+        self.Country = Country
+        self.City = City
+        self.Citizen = Citizen
+        self.Longitude = Longitude
+        self.Latitude = Latitude
+        if Country == '' or type(Country) != type('str'):
+            raise ValueError('The name of the Country should be not empty and String')
+        if City== '' or type(City) != type('str'):
+            raise ValueError('The name of the should be not empty and String')
+        if Citizen <= 0 or type(Citizen) != int:
+            raise ValueError('The number of the citizen should be integer')
+        if float(Longitude) < -180 or float(Longitude) > 180:
+            raise ValueError('The longitude should be restricted to the -180 to 180')
+        if float(Latitude) < -90 or float(Latitude) > 90:
+            raise ValueError('The latitude should be restricted to the -90 to 90')
+
+
     def distance_to(self, other: 'City') -> float:
         raise NotImplementedError
 
