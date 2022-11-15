@@ -8,24 +8,24 @@ from decimal import Decimal
 class City:
     # to represent a single city, this class would be created City object and
     # used by call methods
-    def __init__(self, city_name, country_name, citizen_number, geography_latitude, geography_longitude):
+    def __init__(self, city_name, country, citizen, geography_latitude, geography_longitude):
         # to create city object by using basic properties
-        self.city_name = city_name
-        self.country_name = country_name
-        self.citizen_number = citizen_number
-        self.geography_latitude = geography_latitude
-        self.geography_longitude = geography_longitude
-        # the constructor should check the valid type and value
         if isinstance(city_name, str) != True or city_name == '':
             raise ValueError('The name of the city should be passed as strings and not be empty')
-        if isinstance(country_name, str) != True or country_name == '':
+        if isinstance(country, str) != True or country == '':
             raise ValueError('The name of the country should be passed as strings and not be empty')
-        if isinstance(citizen_number, int) != True or citizen_number <= 0:
+        if isinstance(citizen, int) != True or citizen < 0:
             raise ValueError('The number of the citizen should be integer')
         if isinstance(geography_latitude, float) < -90 or isinstance(geography_latitude, float) > 90:
             raise ValueError('The value of the longitude should be limited from the -90 to 90')
         if isinstance(geography_longitude, float) < -180 or isinstance(geography_longitude, float) > 180:
             raise ValueError('The value of the longitude should be limited from the -180 to 180')
+        self.city_name = city_name
+        self.country = country
+        self.citizen = citizen
+        self.geography_latitude = geography_latitude
+        self.geography_longitude = geography_longitude
+        # the constructor should check the valid type and value
 
     def distance_to(self, other: 'City') -> float:
         # to calculate the distance from one city to another
@@ -38,19 +38,18 @@ class City:
         differ_latitude = latitude_2 - latitude_1
         d = 2 * R * asin(
             sqrt(sin(differ_latitude / 2) ** 2 + cos(latitude_1) * cos(latitude_2) * (sin(differ_longitude / 2) ** 2)))
-        D = float(Decimal(d).quantize(Decimal('0')))
-        return D
+        return d
         raise NotImplementedError("Error: function not implemented!")
 
     def co2_to(self, other: 'City') -> float:
         # to calculate the emission with distance
         d_distance = self.distance_to(other)
         if d_distance <= 1000:
-            co2 = 200 * d_distance * self.citizen_number
+            co2 = 200 * d_distance * self.citizen
         if 1000 < d_distance <= 8000:
-            co2 = 250 * d_distance * self.citizen_number
+            co2 = 250 * d_distance * self.citizen
         if d_distance > 8000:
-            co2 = 300 * d_distance * self.citizen_number
+            co2 = 300 * d_distance * self.citizen
         return co2
         raise NotImplementedError("Error: function not implemented!")
 
@@ -68,75 +67,74 @@ class CityCollection:
     def countries(self) -> List[str]:
         countries = []
         for city in self.cities:
-            if city.country_name not in countries:
-                countries.append(city.country_name)
+            if city.country not in countries:
+                countries.append(city.country)
         return countries
+        raise NotImplementedError
 
     def total_attendees(self) -> int:
         attendees = 0
         for city in self.cities:
-            attendees_num = attendees + city.citizen_number
-            attendees = attendees_num
-        return attendees_num
+            attendees += city.citizen
+        return attendees
+        raise NotImplementedError
 
     def total_distance_travel_to(self, city: City) -> float:
-        # raise NotImplementedError
+
         total_distance = 0
-        for city_destination in self.cities:
-            total_distance += city_destination.distance_to(city)
-            # final_distance = Decimal(total_distance).quantize(Decimal('0'))
+        for city_arrival in self.cities:
+            total_distance += city_arrival.distance_to(city)
         return total_distance
+        raise NotImplementedError
 
     def travel_by_country(self, city: City) -> Dict[str, float]:
         # raise NotImplementedError
-        Dict = {}
+        Dic_country = {}
         for country in self.countries():
-            Dict[country] = 0
+            Dic_country[country] = 0
 
         for city_destination in self.cities:
-            Dict[city_destination.country_name] += (
-                    city_destination.distance_to(city) * city_destination.citizen_number)
-
-        return Dict
+            Dic_country[city_destination.country] += (
+                    city_destination.distance_to(city) * city_destination.citizen)
+        return Dic_country
+        raise NotImplementedError
 
     def total_co2(self, city: City) -> float:
         # raise NotImplementedError
         total_co2 = 0
-        for city_departure in self.cities:
-            total_co2 += city_departure.co2_to(city)
+        for city_leave in self.cities:
+            total_co2 += city_leave.co2_to(city)
         return total_co2
+        raise NotImplementedError
 
     def co2_by_country(self, city: City) -> Dict[str, float]:
         # raise NotImplementedError
-        Dict = {}
+        Dic_country = {}
         for country in self.countries():
-            Dict[country] = 0
+            Dic_country[country] = 0
 
-        for city_destination in self.cities:
-            Dict[city_destination.country_name] += (city_destination.co2_to(city))
+        for city_arrival in self.cities:
+            Dic_country[city_arrival.country] += (city_arrival.co2_to(city))
+        return Dic_country
+        raise NotImplementedError
 
-        return Dict
-
-    def summary(self, city: City):
-        # raise NotImplementedError
-        total_attendees = 0
-        for city_departure in self.cities:
-            total_attendees += city_departure.citizen_number
-        return print('Host city: ' + city.city_name + ' (' + city.country_name + ')',
-                     '\nTotal CO2: ' + str(round(self.total_co2(city) / 1000, 0)) + ' tones',
-                     '\nTotal attendees travelling to ' + city.city_name + ' from ' + str(len(self.cities)) +
-                     ' different cities: ' + str(total_attendees))
+    # def summary(self, city: City):
+    #     attendees = 0
+    #     print('Host city: {}')
+    #     print('Total CO2: '')
+    #     raise NotImplementedError
 
     def sorted_by_emissions(self) -> List[Tuple[str, float]]:
         # sort a list of city names and co2 emissions
         # raise NotImplementedError
-        co2_list = []
-        for city_host in self.cities:
-            co2_list.append((city_host.city_name, self.total_co2(city_host)))
-
-        sorted_by_emissions = sorted(co2_list, key=lambda tup: tup[1])
+        co2_emission_list = []
+        for city_emission in self.cities:
+            co2_emission_list.append((city_emission.city_name, self.total_co2(city_emission)))
+        print(co2_emission_list)
+        sorted_by_emissions = sorted(co2_emission_list, key=lambda w: w[1])
 
         return sorted_by_emissions
+        raise NotImplementedError
 
     def plot_top_emitters(self, city: City, n: int, save: bool):
         # total co2 emission on y-axis, x-axis the country
@@ -170,4 +168,3 @@ class CityCollection:
         plt.title("Total co2 emissions from each country(TOP 10)")
         plt.savefig('city_name.png')
         plt.show()
-

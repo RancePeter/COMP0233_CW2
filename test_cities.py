@@ -15,8 +15,8 @@ def test_data_valid():
 def test_work_transportation():
     beijing = City('Beijing', 'China', 950, 39.9, 116.4)
     london = City('London', 'China', 117, 51.5, -0.1)
-    aimd_distance = 8140.0
-    aimd_co2 = 2319900000.0
+    aimd_distance = 8140.263612645919
+    aimd_co2 = 2319975129.604087
     assert beijing.distance_to(london) == aimd_distance
     assert beijing.co2_to(london) == aimd_co2
 
@@ -31,9 +31,9 @@ def test_work_collection():
     city_collection = CityCollection(list_of_cities)
     assert city_collection.countries() == ['China', 'United Kingdom']
     assert city_collection.total_attendees() == 1476
-    aimd_total_distance = 11156
+    aimd_total_distance = 11156.684775210135
     assert city_collection.total_distance_travel_to(beijing) == aimd_total_distance
-    aimd = {'United Kingdom': 952380.0, 'China': 395355.0}
+    aimd = {'United Kingdom': 952410.8426795725, 'China': 395345.52902103646}
     assert city_collection.travel_by_country(beijing) == aimd
 
 

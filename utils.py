@@ -34,3 +34,5 @@ def find_city(key):
 city_collections = read_attendees_file(file_path)  # city_collections is list
 print(city_collections.plot_top_emitters(find_city('Zurich'), 10, False))
 # By default, n should be 10 and save should be False.
+print(city_collections.sorted_by_emissions())
+# print(city_collections.total_co2(find_city('Zurich')))
