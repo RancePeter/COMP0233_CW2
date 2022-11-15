@@ -2,6 +2,7 @@ import math
 from typing import Dict, List, Tuple
 from math import *
 import matplotlib.pyplot as plt
+from decimal import Decimal
 
 
 class City:
@@ -37,7 +38,8 @@ class City:
         differ_latitude = latitude_2 - latitude_1
         d = 2 * R * asin(
             sqrt(sin(differ_latitude / 2) ** 2 + cos(latitude_1) * cos(latitude_2) * (sin(differ_longitude / 2) ** 2)))
-        return d
+        D = float(Decimal(d).quantize(Decimal('0')))
+        return D
         raise NotImplementedError("Error: function not implemented!")
 
     def co2_to(self, other: 'City') -> float:
@@ -82,7 +84,7 @@ class CityCollection:
         total_distance = 0
         for city_destination in self.cities:
             total_distance += city_destination.distance_to(city)
-
+            # final_distance = Decimal(total_distance).quantize(Decimal('0'))
         return total_distance
 
     def travel_by_country(self, city: City) -> Dict[str, float]:
