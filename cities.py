@@ -30,28 +30,32 @@ class City:
     def distance_to(self, other: 'City') -> float:
         # to calculate the distance from one city to another
         R = 6371
-        longitude_1 = math.radians(self.geography_longitude)
-        latitude_1 = math.radians(self.geography_latitude)
-        longitude_2 = math.radians(other.geography_longitude)
-        latitude_2 = math.radians(other.geography_latitude)
-        differ_longitude = longitude_2 - longitude_1
-        differ_latitude = latitude_2 - latitude_1
+        a = math.radians(self.geography_longitude)
+        b = math.radians(self.geography_latitude)
+        c = math.radians(other.geography_longitude)
+        d = math.radians(other.geography_latitude)
+        A = c - a
+        B = d - b
         d = 2 * R * asin(
-            sqrt(sin(differ_latitude / 2) ** 2 + cos(latitude_1) * cos(latitude_2) * (sin(differ_longitude / 2) ** 2)))
+            sqrt(sin(B / 2) ** 2 + cos(b) * cos(d) * (sin(A / 2) ** 2)))
+        if other is None:
+            raise ValueError("The other city is none")
+
         return d
-        raise NotImplementedError("Error: function not implemented!")
 
     def co2_to(self, other: 'City') -> float:
         # to calculate the emission with distance
-        d_distance = self.distance_to(other)
-        if d_distance <= 1000:
-            co2 = 200 * d_distance * self.citizen
-        if 1000 < d_distance <= 8000:
-            co2 = 250 * d_distance * self.citizen
-        if d_distance > 8000:
-            co2 = 300 * d_distance * self.citizen
+        d = self.distance_to(other)
+        if d <= 1000:
+            co2 = 200 * d * self.citizen
+        elif 1000 < d <= 8000:
+            co2 = 250 * d * self.citizen
+        else:
+            co2 = 300 * d * self.citizen
+        if other is None:
+            raise ValueError("The other city is none")
+
         return co2
-        raise NotImplementedError("Error: function not implemented!")
 
 
 class CityCollection:
@@ -61,7 +65,10 @@ class CityCollection:
     # hold it as member variable(cities)
     # call method countries and total_attendees to access
     def __init__(self, cities: City):
-        self.cities = cities
+        if isinstance(cities, list):
+            self.cities = cities
+        else:
+            raise ValueError("The input of the cities is invalid")
         # print(cities)
 
     def countries(self) -> List[str]:
@@ -69,43 +76,50 @@ class CityCollection:
         for city in self.cities:
             if city.country not in countries:
                 countries.append(city.country)
+        if not isinstance(countries, List):
+            raise ValueError("The countries is not List")
+
         return countries
-        raise NotImplementedError
 
     def total_attendees(self) -> int:
         attendees = 0
         for city in self.cities:
             attendees += city.citizen
+        if not isinstance(attendees, int):
+            raise ValueError("The value of attendees is not int")
+
         return attendees
-        raise NotImplementedError
 
     def total_distance_travel_to(self, city: City) -> float:
-
         total_distance = 0
         for city_arrival in self.cities:
             total_distance += city_arrival.distance_to(city)
+        if not isinstance(total_distance, float):
+            raise ValueError("The value of distance is not float")
+
         return total_distance
-        raise NotImplementedError
 
     def travel_by_country(self, city: City) -> Dict[str, float]:
-        # raise NotImplementedError
+
         Dic_country = {}
         for country in self.countries():
             Dic_country[country] = 0
 
-        for city_destination in self.cities:
-            Dic_country[city_destination.country] += (
-                    city_destination.distance_to(city) * city_destination.citizen)
+        for city_arrival in self.cities:
+            Dic_country[city_arrival.country] += (
+                    city_arrival.distance_to(city) * city_arrival.citizen)
+        if not isinstance(Dic_country, Dict):
+            raise ValueError("The dic_country is not Dict")
         return Dic_country
-        raise NotImplementedError
 
     def total_co2(self, city: City) -> float:
         # raise NotImplementedError
         total_co2 = 0
         for city_leave in self.cities:
             total_co2 += city_leave.co2_to(city)
+        if not isinstance(total_co2, float):
+            raise ValueError("The total_co2 is not float")
         return total_co2
-        raise NotImplementedError
 
     def co2_by_country(self, city: City) -> Dict[str, float]:
         # raise NotImplementedError
@@ -115,11 +129,11 @@ class CityCollection:
 
         for city_arrival in self.cities:
             Dic_country[city_arrival.country] += (city_arrival.co2_to(city))
+        if not isinstance(Dic_country, Dict):
+            raise ValueError("The Dic_country is not dict")
         return Dic_country
-        raise NotImplementedError
 
     # def summary(self, city: City):
-    #     attendees = 0
     #     print('Host city: {}')
     #     print('Total CO2: '')
     #     raise NotImplementedError
@@ -131,10 +145,9 @@ class CityCollection:
         for city_emission in self.cities:
             co2_emission_list.append((city_emission.city_name, self.total_co2(city_emission)))
         print(co2_emission_list)
-        sorted_by_emissions = sorted(co2_emission_list, key=lambda w: w[1])
+        sorted_by_emissions = sorted(co2_emission_list, key=lambda x: x[1])
 
         return sorted_by_emissions
-        raise NotImplementedError
 
     def plot_top_emitters(self, city: City, n: int, save: bool):
         # total co2 emission on y-axis, x-axis the country
@@ -156,8 +169,8 @@ class CityCollection:
         co2_other = sum(co2_list_country_other)
         co2_list.append(co2_other)
         for i in range(0, len(co2_list)):
-            a = co2_list[i] / 1000
-            co2_list_tones.append(a)
+            weight = co2_list[i] / 1000
+            co2_list_tones.append(weight)
         # describe the figure
         plt.figure(figsize=(15, 5), dpi=80)
         plt.xticks(range(len(country_list)), country_list, rotation=0, fontsize=12)
@@ -166,5 +179,7 @@ class CityCollection:
         plt.xlabel("")
         plt.ylabel("Total CO2 Emission /tone)")
         plt.title("Total co2 emissions from each country(TOP 10)")
-        plt.savefig('city_name.png')
+
+        plt.savefig('{}.png'.format(city.city_name.replace(' ', '_')))
+
         plt.show()

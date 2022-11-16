@@ -1,3 +1,5 @@
+import pytest
+
 from cities import City, CityCollection
 
 
@@ -47,8 +49,14 @@ def test_work_sorted():
     london = City('London', 'United Kingdom', 117, 51.5, -0.1)
     list_of_cities = [beijing, shanghai, nanjing, wuhan, london]
     city_collection = CityCollection(list_of_cities)
-    aimd = [('Beijing', 374182350.0), ('Nanjing', 497649300.0), ('Wuhan', 595635500.0), ('Shanghai', 601174100.0), ('London', 3425297400.0)]
+    aimd = [('Beijing', 374192912.63098997), ('Nanjing', 497599518.3213414), ('Wuhan', 595719276.8848786), ('Shanghai', 601267132.5095515), ('London', 3425381847.6923823)]
     assert city_collection.sorted_by_emissions() == aimd
+
+
+def test_negative_alternative():
+    aimd_message = 'The name of the city should be passed as strings and not be empty'
+    with pytest.raises(ValueError, match=aimd_message):
+        beijing = City('', 'China', 950, 39.9, 116.4)
 
 
 def main():
@@ -56,6 +64,7 @@ def main():
     test_data_valid()
     test_work_transportation()
     test_work_collection()
+    test_negative_alternative()
     # test_work_host()
     test_work_sorted()
 

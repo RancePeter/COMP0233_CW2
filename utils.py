@@ -8,20 +8,18 @@ file_path = Path("attendee_locations.csv")
 def read_attendees_file(filepath: Path) -> CityCollection:
     # (csv) the argument of read_attendees_file  is Path object from module
     # file can be anywhere
-    csv_data = csv.reader(open(filepath))
-    headers = next(csv_data)  # read the first line
     list_of_cities = []
     list_of_distance = []
     list_of_city_collection = []
+    csv_data = csv.reader(open(filepath))
+    headers = next(csv_data)  # read the first line
+
     for row in csv_data:
         city = City(row[3], row[1], int(row[0]), float(row[4]), float(row[5]))
         # city is cities.City object has properties in constructor
         list_of_cities.append(city)
 
     city_collection = CityCollection(list_of_cities)
-    # print(list_of_cities)
-    # print(city_collection.cities == list_of_cities)
-    # print(city_collection.cities)
     return city_collection
 
 
